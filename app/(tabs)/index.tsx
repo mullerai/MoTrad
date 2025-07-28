@@ -1,75 +1,70 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React from 'react'
+import { StyleSheet, Text, View } from 'react-native'
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-
-export default function HomeScreen() {
+const app = () => {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+    <View style={styles.container}>
+    <View style={styles.titleContainer}>
+      <Text style={styles.titleText}>MoTrad</Text>
+    </View>
+    <View style={styles.contentContainer}>
+    <View style={styles.aboutContainer}>
+        <Text style={styles.aboutText}>MoTrad is your personal companion for exploring and cataloguing Irish Traditional Music. {"\n\n"}
+
+Record your sessions, track the tunes you know (and want to learn), and keep notes on your journey through the tradition.{"\n\n"}
+
+Whether you're just starting out or deep into the session scene, MoTrad is here to help make trad music more accessible, memorable, and meaningful.{"\n\n"}
+        </Text>
+        <Text style={styles.creditsText}>Developed by Aidan Muller.</Text>
+    </View>
+    </View>
+    </View>
+  )
 }
 
+export default app
+
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+    container: {
+        flex: 1,
+        flexDirection: 'column',
+        backgroundColor: "#72523A",
+        justifyContent: "flex-start",
+        alignItems: "center",
+    },
+    titleText: {
+        color: "white",
+        textAlign: "center",
+        fontSize: 42,
+        fontWeight: "bold",
+    },
+    titleContainer: {
+        height: "40%",
+        display: "flex",
+        flexDirection: 'column',
+        justifyContent: "center",
+    },
+    contentContainer: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+    },
+    aboutContainer: {
+        display: "flex",
+        height: "80%",
+        width: "80%",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+    },
+    aboutText: {
+        color: "white",
+        fontSize: 15,
+    },
+    creditsText: {
+        color: "white",
+        fontSize: 15,
+        fontStyle: "italic",
+    }
+})
