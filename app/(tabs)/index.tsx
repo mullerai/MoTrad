@@ -1,7 +1,24 @@
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 const app = () => {
+  const [username, setUsername] = useState('User');
+  const [greeting, setGreeting] = useState('');
+  const getUserDetails = async () => {
+    try {
+        const value = await AsyncStorage.getItem('username');
+        if (value !== null) {
+          setUsername(value);
+          setGreeting("Hey, "+value+"! \n\n");
+        }
+    } catch (error) {
+        console.log(error);
+    }
+  }
+  useEffect(() => {
+    getUserDetails();
+  }, []);
   return (
     <View style={styles.container}>
     <View style={styles.titleContainer}>
@@ -9,7 +26,7 @@ const app = () => {
     </View>
     <View style={styles.contentContainer}>
     <View style={styles.aboutContainer}>
-        <Text style={styles.aboutText}>MoTrad is your personal companion for exploring and cataloguing Irish Traditional Music. {"\n\n"}
+        <Text style={styles.aboutText}>{greeting}MoTrad is your personal companion for exploring and cataloguing Irish Traditional Music. {"\n\n"}
 
 Record your sessions, track the tunes you know (and want to learn), and keep notes on your journey through the tradition.{"\n\n"}
 
