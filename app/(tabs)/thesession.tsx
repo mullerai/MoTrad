@@ -47,6 +47,11 @@ const app = () => {
       onPress={linkSession}
       color="#c9a66b"
       />
+      <View style={styles.contentContainer}>
+      <Text style={styles.contentText}>{"\n\n"}To link your TheSession.org account with our website, you will need your TheSession UserID. 
+        This can be found in the url of your TheSession account page. It will be in the form https://www.thesession.org/members/[UserID].
+      </Text>
+      </View>
     </View>
   )
 }
@@ -72,5 +77,12 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: 'column',
         justifyContent: "center",
+    },
+    contentText: {
+        color: "white",
+        fontSize: 15,
+    },
+    contentContainer: {
+        width: "80%",
     }
 })

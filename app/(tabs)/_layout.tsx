@@ -37,7 +37,7 @@ export default function TabLayout() {
         name="thesession"
         options={{
           title: 'Link TheSession',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="sync" color={color} />,
         }}
       />
     </Tabs>
