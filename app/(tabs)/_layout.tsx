@@ -37,6 +37,7 @@ export default function TabLayout() {
         name="thesession"
         options={{
           title: 'Link TheSession',
+          // @ts-ignore
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="sync" color={color} />,
         }}
       />
