@@ -5,6 +5,7 @@ import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 const app = () => {
   const [userid, setUserID] = useState('');
   const [username, setUsername] = useState('User');
+  const [message, setMessage] = useState('No TheSession account linked.')
   const linkSession = async () => {
     fetch('https://thesession.org/members/'+userid+'/tunebook?format=json') // thesession.org json api request
         .then(response => response.json())
@@ -12,13 +13,18 @@ const app = () => {
             setUsername(json["member"]["name"]);
             await AsyncStorage.removeItem('username'); // delete the old username
             await AsyncStorage.setItem('username', json["member"]["name"]); // add the new one
-        });
+            setMessage(json["member"]["name"]);
+
+            await AsyncStorage.removeItem('userid');
+            await AsyncStorage.setItem('userid', userid);
+          });
   }
   const retrieveUserName = async () => {
     try {
         const value = await AsyncStorage.getItem('username'); // check if username is already stored
         if (value !== null) {
           setUsername(value);
+          setMessage(value);
         }
     } catch (error) {
         console.log(error);
@@ -30,7 +36,7 @@ const app = () => {
   return (
     <View style={styles.container}>
         <View style={styles.titleContainer}>
-      <Text style={styles.titleText}>Tunelists - {username}</Text>
+      <Text style={styles.titleText}>{message}</Text>
       </View>
       <TextInput
         placeholder={"Enter TheSession UserID"}
