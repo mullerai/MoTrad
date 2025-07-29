@@ -18,7 +18,8 @@ const MAPPING = {
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
-  'sync': 'cloud-sync',
+  'sync': 'link',
+  'list': 'list',
 } as unknown as IconMapping; // didn't have as unknown before quick fix
 
 /**

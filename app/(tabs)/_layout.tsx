@@ -41,6 +41,14 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="sync" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="tunelist"
+        options={{
+          title: 'Tunelist',
+          // @ts-ignore
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="list" color={color} />,
+        }}
+      />
     </Tabs>
   );
 }
