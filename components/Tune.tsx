@@ -7,11 +7,12 @@ interface Props {
     id: string;
     type: string;
     instrument?: string;
+    onPress?: () => void;
 }
 
-const Tune: React.FC<Props> = ({title, id, type, instrument=''}) => {
+const Tune: React.FC<Props> = ({title, id, type, instrument='', onPress}) => {
     return (
-        <TouchableOpacity style={styles.TuneContainer}>
+        <TouchableOpacity style={styles.TuneContainer} onPress={onPress}>
             <View style={styles.infoContainerLeft}>
             <Text style={styles.text}>{title}</Text>
             </View>
