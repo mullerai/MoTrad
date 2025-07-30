@@ -1,6 +1,7 @@
 import Tune from "@/components/Tune";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from "@react-navigation/native";
+import { router } from "expo-router";
 import React, { useCallback, useState } from 'react';
 import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -9,6 +10,16 @@ const app = () => {
     var [learnlistJSON, setLearnlistJSON] = useState<any[]>([]);
     var [whichDisplay, setDisplay] = useState<boolean>(true);
     const [buttonMessage, setButtonMessage] = useState<string>("View Learnlist");
+
+    const viewTune = (id: any) => {
+        router.push({
+          pathname: '/viewTune',
+          params: {
+            id: id
+          },
+        });
+    }
+
     const retrieveTuneLists = async () => {
         try {
             var value = await AsyncStorage.getItem('tunelist'); // check if username is already stored
@@ -55,10 +66,10 @@ const app = () => {
         {
             whichDisplay ? tunelistJSON.map((tune: any, key) => (
                 //<Text key={key}>{tune.name}</Text>
-                <Tune key={key} title={tune.name} id={tune.id} type={tune.type} instrument="banjo"></Tune>
+                <Tune key={key} title={tune.name} id={tune.id} type={tune.type} instrument="banjo" onPress={()=>viewTune(tune.id)}></Tune>
             )) : learnlistJSON.map((tune: any, key) => (
                 //<Text key={key}>{tune.name}</Text>
-                <Tune key={key} title={tune.name} id={tune.id} type={tune.type} instrument="banjo"></Tune>
+                <Tune key={key} title={tune.name} id={tune.id} type={tune.type} instrument="banjo" onPress={()=>viewTune(tune.id)}></Tune>
             ))
         }
         </ScrollView>
