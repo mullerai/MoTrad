@@ -23,8 +23,17 @@ const app = () => {
     const retrieveTuneLists = async () => {
         try {
             var value = await AsyncStorage.getItem('tunelist'); // check if username is already stored
+            var tuneList = [];
             if (value !== null) {
-                setTunelistJSON(JSON.parse(value));
+                tuneList = JSON.parse(value);
+                setTunelistJSON(tuneList);
+            }
+
+            var value = await AsyncStorage.getItem('customTunelist');
+            if (value !== null) {
+                var tempArray = [];
+                tempArray = tuneList.concat(JSON.parse(value));
+                setTunelistJSON(tempArray);
             }
 
             value = await AsyncStorage.getItem('learnlist');

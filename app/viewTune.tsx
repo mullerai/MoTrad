@@ -1,7 +1,8 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 
 const app = () => {
   const { id } = useLocalSearchParams();
@@ -9,6 +10,69 @@ const app = () => {
   const [tuneType, setTuneType] = useState("");
   const [tuneABC, setTuneABC] = useState("");
   const [tuneKey, setTuneKey] = useState("");
+  const [duplicateDisplay, setDuplicateDisplay] = useState<boolean>(false);
+
+  const addToTuneList = async () => {
+    setDuplicateDisplay(false);
+    var value = await AsyncStorage.getItem('customTunelist');
+    if (value != null) {
+      var temp = JSON.parse(value);
+      var match = false;
+      temp.forEach((tune: any) => {
+        if (tune["id"]==id) {
+          match = true;
+        }
+      })
+      if (!match) {
+        temp.push({
+          id: id,
+          name: tuneName,
+          type: tuneType,
+        });
+      } else {
+        setDuplicateDisplay(true);
+      }
+      await AsyncStorage.setItem('customTunelist', JSON.stringify(temp));
+    } else {
+      var temp: any = [{
+        id: id,
+        name: tuneName,
+        type: tuneType,
+      }]
+      await AsyncStorage.setItem('customTunelist', JSON.stringify(temp));
+    }
+  }
+
+  const addToLearnList = async () => {
+    setDuplicateDisplay(false);
+    var value = await AsyncStorage.getItem('learnlist');
+    if (value != null) {
+      var temp = JSON.parse(value);
+      var match = false;
+      temp.forEach((tune: any) => {
+        if (tune["id"]==id) {
+          match = true;
+        }
+      })
+      if (!match) {
+        temp.push({
+          id: id,
+          name: tuneName,
+          type: tuneType,
+        });
+      } else {
+        setDuplicateDisplay(true);
+      }
+      await AsyncStorage.setItem('learnlist', JSON.stringify(temp));
+    } else {
+      var temp: any = [{
+        id: id,
+        name: tuneName,
+        type: tuneType,
+      }]
+      await AsyncStorage.setItem('learnlist', JSON.stringify(temp));
+    }
+  }
 
   const getTuneInfo = async () => {
     const response = await fetch("https://thesession.org/tunes/"+id+"?format=json");
@@ -53,8 +117,17 @@ const app = () => {
           </Text>
         </View>
         <View style={styles.actionsContainer}>
-          <Text>Add to tunelist</Text>
-          <Text>Add to learnlist</Text>
+          <Button title="Add to tunelist"
+                          onPress={addToTuneList}
+                          color="#c9a66b"
+                      />
+          <Button title="Add to learnlist"
+                          onPress={addToLearnList}
+                          color="#c9a66b"
+                      />
+           <Text style={{color: "red", display: duplicateDisplay ? 'flex' : 'none'}}>
+                {"\n\n"}Tune is already in list
+                </Text>
         </View>
     </View>
   )
