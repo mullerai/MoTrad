@@ -49,6 +49,14 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="list" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="search"
+        options={{
+          title: 'Search Tunes',
+          // @ts-ignore
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="search" color={color} />,
+        }}
+      />
     </Tabs>
   );
 }

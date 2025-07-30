@@ -20,6 +20,7 @@ const MAPPING = {
   'chevron.right': 'chevron-right',
   'sync': 'link',
   'list': 'list',
+  'search': 'search'
 } as unknown as IconMapping; // didn't have as unknown before quick fix
 
 /**

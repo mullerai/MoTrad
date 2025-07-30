@@ -1,6 +1,7 @@
 import Tune from "@/components/Tune";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
+import { useFocusEffect } from "@react-navigation/native";
+import React, { useCallback, useState } from 'react';
 import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 const app = () => {
@@ -24,9 +25,11 @@ const app = () => {
             console.log(error);
         }
       }
-      useEffect(() => {
-        retrieveTuneLists();
-      }, []);
+    useFocusEffect(
+        useCallback(() => {
+            retrieveTuneLists();
+        }, [])
+    );
     const buttonToggle = () => {
         if (whichDisplay == true) {
             setDisplay(false);
