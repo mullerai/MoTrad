@@ -11,10 +11,15 @@ const app = () => {
   const [tuneABC, setTuneABC] = useState("");
   const [tuneKey, setTuneKey] = useState("");
   const [duplicateDisplay, setDuplicateDisplay] = useState<boolean>(false);
+  const [onLearnList, setLearnListState] = useState(false);
+  const [onTuneList, setTuneListState] = useState(false);
+  const [onCustomTuneList, setCustomTuneListState] = useState(false);
 
   const addToTuneList = async () => {
     setDuplicateDisplay(false);
     var value = await AsyncStorage.getItem('customTunelist');
+    var value2 = await AsyncStorage.getItem('tunelist');
+
     if (value != null) {
       var temp = JSON.parse(value);
       var match = false;
@@ -23,6 +28,14 @@ const app = () => {
           match = true;
         }
       })
+      if (value2 != null) { // check that it is not in the tunelist from thesession
+        var temp2 = JSON.parse(value2);
+        temp2.forEach((tune: any) => {
+          if (tune["id"]==id) {
+            match = true;
+          }
+        })
+      }
       if (!match) {
         temp.push({
           id: id,
@@ -33,6 +46,8 @@ const app = () => {
         setDuplicateDisplay(true);
       }
       await AsyncStorage.setItem('customTunelist', JSON.stringify(temp));
+      setTuneListState(true);
+      setCustomTuneListState(true);
     } else {
       var temp: any = [{
         id: id,
@@ -40,6 +55,8 @@ const app = () => {
         type: tuneType,
       }]
       await AsyncStorage.setItem('customTunelist', JSON.stringify(temp));
+      setTuneListState(true);
+      setCustomTuneListState(true);
     }
   }
 
@@ -64,6 +81,7 @@ const app = () => {
         setDuplicateDisplay(true);
       }
       await AsyncStorage.setItem('learnlist', JSON.stringify(temp));
+      setLearnListState(true);
     } else {
       var temp: any = [{
         id: id,
@@ -71,6 +89,36 @@ const app = () => {
         type: tuneType,
       }]
       await AsyncStorage.setItem('learnlist', JSON.stringify(temp));
+      setLearnListState(false);
+    }
+  }
+
+  const removeFromLearnList = async () => {
+    var value = await AsyncStorage.getItem('learnlist');
+    if (value != null) {
+      var temp = JSON.parse(value);
+      for (let i = 0; i < temp.length; i++) {
+        if (temp[i]["id"] == id) {
+          temp.splice(i, 1);
+        } 
+      }
+      await AsyncStorage.setItem('learnlist', JSON.stringify(temp));
+      setLearnListState(false);
+    }
+  }
+
+  const removeFromTuneList = async () => {
+    var value = await AsyncStorage.getItem('customTunelist');
+    if (value != null) {
+      var temp = JSON.parse(value);
+      for (let i = 0; i < temp.length; i++) {
+        if (temp[i]["id"] == id) {
+          temp.splice(i, 1);
+        } 
+      }
+      await AsyncStorage.setItem('customTunelist', JSON.stringify(temp));
+      setCustomTuneListState(false);
+      setTuneListState(false);
     }
   }
 
@@ -88,9 +136,43 @@ const app = () => {
     }
   }
 
+  const getListInfo = async () => {
+    var value: any = await AsyncStorage.getItem('learnlist');
+    if (value != null) {
+      value = JSON.parse(value);
+      value.forEach((tune: any) => {
+        if (tune["id"]==id) {
+          setLearnListState(true);
+        }
+      });
+    }
+
+    value = await AsyncStorage.getItem('tunelist');
+    if (value != null) {
+      value = JSON.parse(value);
+      value.forEach((tune: any) => {
+        if (tune["id"]==id) {
+          setTuneListState(true);
+        }
+      });
+    }
+
+    value = await AsyncStorage.getItem('customTunelist');
+    if (value != null) {
+      value = JSON.parse(value);
+      value.forEach((tune: any) => {
+        if (tune["id"]==id) {
+          setTuneListState(true);
+          setCustomTuneListState(true);
+        }
+      });
+    }
+  }
+
   useFocusEffect(
     useCallback(() => {
       getTuneInfo();
+      getListInfo();
     }, [])
   );
 
@@ -117,14 +199,24 @@ const app = () => {
           </Text>
         </View>
         <View style={styles.actionsContainer}>
-          <Button title="Add to tunelist"
+          { onTuneList==false ? <Button title="Add to tunelist"
                           onPress={addToTuneList}
                           color="#c9a66b"
-                      />
-          <Button title="Add to learnlist"
+                      /> : ( onCustomTuneList ?
+                      <Button title="Remove from tunelist"
+                          onPress={removeFromTuneList}
+                          color="#c9a66b"/> : <View></View>
+                      )
+          }
+          { onLearnList==false ? <Button title="Add to learnlist"
                           onPress={addToLearnList}
                           color="#c9a66b"
+                      /> : <Button title="Remove from learnlist"
+                      onPress={removeFromLearnList}
+                      color="#c9a66b"
                       />
+
+          }
            <Text style={{color: "red", display: duplicateDisplay ? 'flex' : 'none'}}>
                 {"\n\n"}Tune is already in list
                 </Text>
