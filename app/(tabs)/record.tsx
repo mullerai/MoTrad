@@ -1,16 +1,27 @@
+import Tune from '@/components/Tune';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
-    AudioModule,
-    RecordingPresets,
-    setAudioModeAsync,
-    useAudioRecorder,
-    useAudioRecorderState,
+  AudioModule,
+  RecordingPresets,
+  setAudioModeAsync,
+  useAudioRecorder,
+  useAudioRecorderState,
 } from 'expo-audio';
-import React, { useEffect } from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import * as FileSystem from 'expo-file-system';
+import React, { useEffect, useState } from 'react';
+import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 const app = () => {
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const recorderState = useAudioRecorderState(audioRecorder);
+
+  const [audioURI, setAudioURI] = useState('');
+  const [saveDisplay, setSaveDisplay] = useState(false);
+
+  const [potentialSetName, setPotentialSetName] = useState('');
+  const [location, setLocation] = useState('');
+  const [tuneType, setTuneType] = useState('');
+  const [recordings, setRecordings] = useState<any[]>([]);
 
   const record = async () => {
     await audioRecorder.prepareToRecordAsync();
@@ -20,8 +31,54 @@ const app = () => {
   const stopRecording = async () => {
     // The recording will be available on `audioRecorder.uri`.
     await audioRecorder.stop();
-    console.log(audioRecorder.uri);
+    if (audioRecorder.uri != null) setAudioURI(audioRecorder.uri);
+    setSaveDisplay(true);
   };
+
+  const saveAudio = async () => {
+    const filename = Date.now()+'.m4a';
+    // code to move file from cache to permanent
+    await FileSystem.moveAsync({
+      from: audioURI,
+      to: FileSystem.documentDirectory+filename
+    });
+
+    // save metadata here
+    const data = {
+      filename: filename,
+      name: potentialSetName,
+      location: location,
+      type: tuneType,
+    };
+
+    try {
+      var value: any = await AsyncStorage.getItem('recordings');
+      if (value != null) {
+        value = JSON.parse(value);
+        value.push(data);
+      } else {
+        value = [data];
+      }
+      setRecordings(value);
+      value = JSON.stringify(value);
+      await AsyncStorage.setItem('recordings', value);
+      setSaveDisplay(false);
+    } catch(error) {
+      console.log(error);
+    }
+  }
+
+  const retrieveRecordings = async () => {
+    try {
+        var value: any = await AsyncStorage.getItem('recordings');
+        if (value !== null) {
+            value = JSON.parse(value);
+            setRecordings(value);
+        }
+    } catch(error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
     (async () => {
@@ -35,21 +92,80 @@ const app = () => {
         allowsRecording: true,
       });
     })();
+    retrieveRecordings();
   }, []);
 
-  return (
-    <View style={styles.container}>
-        <View style={styles.header}>
-            <Text style={styles.headerText}>
-                Recordings
-            </Text>
+  if (!saveDisplay) {
+    return (
+      <View style={styles.container}>
+          <View style={styles.header}>
+              <Text style={styles.headerText}>
+                  Recordings
+              </Text>
+          </View>
+          <Button
+          title={recorderState.isRecording ? 'Stop Recording' : 'Start Recording'}
+          onPress={recorderState.isRecording ? stopRecording : record}
+          color="#c9a66b"
+        />
+        <View style={styles.scrollViewStyle}>
+        <ScrollView style={{width: "80%", marginBottom: "5%"}}>
+        {
+            recordings.map((tune: any, key) => (
+                //<Text key={key}>{tune.name}</Text>
+                <Tune key={key} title={tune.name} id='0' type={tune.type} instrument={tune.location}></Tune>
+            ))
+        }
+        </ScrollView>
         </View>
+      </View>
+    )
+  }
+  else {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+              <Text style={styles.headerText}>
+                  Recording Metadata
+              </Text>
+          </View>
+        <TextInput
+                placeholder={"Tune Name(s)"}
+                onChangeText={setName=>setPotentialSetName(setName)}
+                placeholderTextColor="white"
+                cursorColor="white"
+                selectionColor="white"
+                style={styles.textInput}
+              />
+        <TextInput
+                placeholder={"Tune Type"}
+                onChangeText={setName=>setTuneType(setName)}
+                placeholderTextColor="white"
+                cursorColor="white"
+                selectionColor="white"
+                style={styles.textInput}
+              />
+        <TextInput
+                placeholder={"Location"}
+                onChangeText={setName=>setLocation(setName)}
+                placeholderTextColor="white"
+                cursorColor="white"
+                selectionColor="white"
+                style={styles.textInput}
+              />
         <Button
-        title={recorderState.isRecording ? 'Stop Recording' : 'Start Recording'}
-        onPress={recorderState.isRecording ? stopRecording : record}
-      />
-    </View>
-  )
+          title="Save"
+          onPress={saveAudio}
+          color="#c9a66b"
+        />
+        <Button
+          title="Delete"
+          //onPress={deleteAudio}
+          color="#c9a66b"
+        />
+      </View>
+    )
+  }
 }
 
 export default app
@@ -75,5 +191,13 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontSize: 42,
         fontWeight: "bold",
+    },
+    textInput: {
+      color: "white",
+    },
+    scrollViewStyle: {
+      flex: 1,
+      flexDirection: 'column',
+      justifyContent: "center",
     },
 });
