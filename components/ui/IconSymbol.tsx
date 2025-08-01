@@ -20,7 +20,8 @@ const MAPPING = {
   'chevron.right': 'chevron-right',
   'sync': 'link',
   'list': 'list',
-  'search': 'search'
+  'search': 'search',
+  'audio': 'multitrack-audio'
 } as unknown as IconMapping; // didn't have as unknown before quick fix
 
 /**
