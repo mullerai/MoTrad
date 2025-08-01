@@ -75,10 +75,10 @@ const app = () => {
         {
             whichDisplay ? tunelistJSON.map((tune: any, key) => (
                 //<Text key={key}>{tune.name}</Text>
-                <Tune key={key} title={tune.name} id={tune.id} type={tune.type} instrument="banjo" onPress={()=>viewTune(tune.id)}></Tune>
+                <Tune key={key} title={tune.name} id={tune.id} type={tune.type} instrument={tune.instrument} onPress={()=>viewTune(tune.id)}></Tune>
             )) : learnlistJSON.map((tune: any, key) => (
                 //<Text key={key}>{tune.name}</Text>
-                <Tune key={key} title={tune.name} id={tune.id} type={tune.type} instrument="banjo" onPress={()=>viewTune(tune.id)}></Tune>
+                <Tune key={key} title={tune.name} id={tune.id} type={tune.type} instrument={tune.instrument} onPress={()=>viewTune(tune.id)}></Tune>
             ))
         }
         </ScrollView>

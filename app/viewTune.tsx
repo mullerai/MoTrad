@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 
 const app = () => {
   const { id } = useLocalSearchParams();
@@ -14,6 +14,7 @@ const app = () => {
   const [onLearnList, setLearnListState] = useState(false);
   const [onTuneList, setTuneListState] = useState(false);
   const [onCustomTuneList, setCustomTuneListState] = useState(false);
+  const [instrumentText, changeInstrumentText] = useState('');
 
   const addToTuneList = async () => {
     setDuplicateDisplay(false);
@@ -122,6 +123,31 @@ const app = () => {
     }
   }
 
+  const setInstrument = async () => {
+    var value = await AsyncStorage.getItem('customTunelist');
+    if (value != null) {
+      var temp = JSON.parse(value);
+      for (let i = 0; i < temp.length; i++) {
+        if (temp[i]["id"] == id) {
+          temp[i]["instrument"] = instrumentText;
+          await AsyncStorage.setItem('customTunelist', JSON.stringify(temp));
+          return;
+        }
+      }
+    }
+    value = await AsyncStorage.getItem('tunelist');
+    if (value != null) {
+      var temp = JSON.parse(value);
+      for (let i = 0; i < temp.length; i++) {
+        if (temp[i]["id"] == id) {
+          temp[i]["instrument"] = instrumentText;
+          await AsyncStorage.setItem('tunelist', JSON.stringify(temp));
+          return;
+        }
+      }
+    }
+  }
+
   const getTuneInfo = async () => {
     const response = await fetch("https://thesession.org/tunes/"+id+"?format=json");
     const json = await response.json();
@@ -220,6 +246,18 @@ const app = () => {
            <Text style={{color: "red", display: duplicateDisplay ? 'flex' : 'none'}}>
                 {"\n\n"}Tune is already in list
                 </Text>
+          <TextInput
+                  placeholder={"Enter instrument"}
+                  onChangeText={changeInstrumentText}
+                  placeholderTextColor="white"
+                  cursorColor="white"
+                  selectionColor="white"
+                  style={styles.textInput}
+                />
+          <Button title="setInstrument"
+                      onPress={setInstrument}
+                      color="#c9a66b"
+                      />
         </View>
     </View>
   )
@@ -276,5 +314,8 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems:"center"   
-  }
+  },
+  textInput: {
+    color: "white",
+}
 });

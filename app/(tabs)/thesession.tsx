@@ -32,6 +32,7 @@ const app = () => {
               id: d["id"],
               name: d["name"],
               type: d["type"],
+              instrument: "",
             };
             tunelist.push(newJson);
           });
