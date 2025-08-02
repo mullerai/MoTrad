@@ -8,6 +8,7 @@ import {
   useAudioRecorderState,
 } from 'expo-audio';
 import * as FileSystem from 'expo-file-system';
+import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
@@ -34,6 +35,18 @@ const app = () => {
     if (audioRecorder.uri != null) setAudioURI(audioRecorder.uri);
     setSaveDisplay(true);
   };
+
+  const viewRecording = (name: any, setName: any, location: any, tuneType: any) => {
+          router.push({
+            pathname: '/viewRecord',
+            params: {
+              filename: name,
+              name: setName,
+              location: location,
+              type: tuneType
+            },
+          });
+      }
 
   const saveAudio = async () => {
     const filename = Date.now()+'.m4a';
@@ -113,7 +126,7 @@ const app = () => {
         {
             recordings.map((tune: any, key) => (
                 //<Text key={key}>{tune.name}</Text>
-                <Tune key={key} title={tune.name} id='0' type={tune.type} instrument={tune.location}></Tune>
+                <Tune key={key} title={tune.name} id='0' type={tune.type} instrument={tune.location} onPress={()=>viewRecording(tune.filename, tune.name, tune.location, tune.type)}></Tune>
             ))
         }
         </ScrollView>
