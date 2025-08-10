@@ -8,8 +8,8 @@ import {
   useAudioRecorderState,
 } from 'expo-audio';
 import * as FileSystem from 'expo-file-system';
-import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 const app = () => {
@@ -105,8 +105,15 @@ const app = () => {
         allowsRecording: true,
       });
     })();
-    retrieveRecordings();
   }, []);
+
+  useFocusEffect(
+          useCallback(() => {
+            retrieveRecordings();
+          }, [])
+      );
+
+  retrieveRecordings();
 
   if (!saveDisplay) {
     return (

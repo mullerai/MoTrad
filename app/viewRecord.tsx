@@ -1,6 +1,7 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Audio } from "expo-av";
 import * as FileSystem from 'expo-file-system';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 
@@ -18,6 +19,28 @@ const app = () => {
 
   const playSound = async () => {
     await sound.replayAsync();
+  }
+
+  const deleteRecording = async () => {
+    if (FileSystem.documentDirectory != null)
+      await FileSystem.deleteAsync(FileSystem.documentDirectory+filename, { idempotent: true });
+    try {
+      var recordings: any = await AsyncStorage.getItem('recordings');
+      if (recordings != null) {
+        var temp = JSON.parse(recordings);
+        for (let i = 0; i < temp.length; i++) {
+          if (temp[i]["filename"] == filename) {
+            temp.splice(i, 1);
+          } 
+        }
+        await AsyncStorage.setItem('recordings', JSON.stringify(temp));
+        router.push({
+                    pathname: '/(tabs)/record',
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   useEffect(() => {
@@ -41,6 +64,13 @@ const app = () => {
                 title="play"
                 onPress={() => {
                     playSound();
+                }}
+                color="#c9a66b"
+            />
+            <Button
+                title="delete"
+                onPress={() => {
+                    deleteRecording();
                 }}
                 color="#c9a66b"
             />
